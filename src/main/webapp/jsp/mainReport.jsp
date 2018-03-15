@@ -37,14 +37,24 @@ String appJavaVersion = AppServerInfo.getJavaVersion();
 String appServerTime = AppServerInfo.getServerTime("yyyy-MM-dd HH:mm:ss");
 String fullHostname = AppServerInfo.getUrl();
 String baseDirLabel = AppServerInfo.getBaseDirPath();
-long baseDirDiskUsage = AppServerInfo.getDiskUsage(baseDirLabel);
+double baseDirDiskUsage = AppServerInfo.getDiskUsage(baseDirLabel);
 
 
 //  Learn Version
 String learnVersion = "";
 learnVersion = blackboard.platform.LicenseUtil.getBuildNumber();
 String contentDirLabel = AppServerInfo.getContentDirPath();
-long contentDirDiskUsage = AppServerInfo.getDiskUsage(contentDirLabel);
+    double contentDirDiskUsage = AppServerInfo.getDiskUsage(contentDirLabel);
+
+String externalStorageDirLabel = AppServerInfo.getExternalStorageDirPath();
+    double externalStorageDirDiskUsage = AppServerInfo.getDiskUsage(externalStorageDirLabel);
+
+String adjustedContentSize ="";
+if (externalStorageDirLabel.startsWith(contentDirLabel))
+{
+    contentDirDiskUsage -= externalStorageDirDiskUsage;
+    adjustedContentSize = " (adjusted to remove external storage)";
+}
 
 
 // Db Info
@@ -192,6 +202,9 @@ pageContext.setAttribute("dbListSchemas", dbListSchemas);
 
 
         <bbNG:step title="Storage Usage">
+            <bbNG:dataElement label="Base dir path" isRequired="yes" labelFor="appServerBaseDir">
+                <%=baseDirLabel%>
+            </bbNG:dataElement>
             <bbNG:dataElement label="Base dir disk usage" isRequired="yes" labelFor="appServerBaseDirDf">
                 <%=baseDirDiskUsage%> GB
             </bbNG:dataElement>
@@ -199,7 +212,13 @@ pageContext.setAttribute("dbListSchemas", dbListSchemas);
                 <%=contentDirLabel%>
             </bbNG:dataElement>
             <bbNG:dataElement label="Content disk usage" isRequired="yes" labelFor="appServerontentDirDf">
-                <%=contentDirDiskUsage%> GB
+                <%=contentDirDiskUsage%> GB <%=adjustedContentSize%>
+            </bbNG:dataElement>
+            <bbNG:dataElement label="External storage dir path" isRequired="yes" labelFor="appServerContentDir">
+                <%=externalStorageDirLabel%>
+            </bbNG:dataElement>
+            <bbNG:dataElement label="External storage disk usage" isRequired="yes" labelFor="appServerontentDirDf">
+                <%=externalStorageDirDiskUsage%> GB
             </bbNG:dataElement>
             <bbNG:dataElement label="Database size" isRequired="yes" labelFor="dbsize">
             <c:choose>
