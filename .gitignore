@@ -5,3 +5,5 @@ bin
 .project
 .settings
 /src/api/.nb-gradle/
+.DS_Store
+.idea/
